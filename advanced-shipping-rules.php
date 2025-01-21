@@ -56,28 +56,39 @@ function advanced_shipping_rules_init() {
                     'title'       => __( 'Base Cost', 'advanced-shipping-rules' ),
                     'type'        => 'number',
                     'description' => __( 'Base shipping cost', 'advanced-shipping-rules' ),
-                    'default'     => 10,
+                    'default'     => 1000, // Base cost in RWF
+                ],
+                'extra_cost_per_km' => [
+                    'title'       => __( 'Extra Cost per KM', 'advanced-shipping-rules' ),
+                    'type'        => 'number',
+                    'description' => __( 'Additional cost for each kilometer beyond 5 KM.', 'advanced-shipping-rules' ),
+                    'default'     => 200, // Extra cost in RWF
                 ],
             ];
         }
 
         public function calculate_shipping( $package = [] ) {
-            $base_cost = $this->get_option( 'base_cost', 10 ); // Default base cost
-            $distance_cost = 5; // Example: Add $5 for distance (customize this as needed)
-            $weight_cost = 0;
+            // Settings
+            $base_cost = $this->get_option( 'base_cost', 1000 ); // Default base cost for 5 km
+            $extra_cost_per_km = $this->get_option( 'extra_cost_per_km', 200 ); // Additional cost per km
 
-            // Example: Calculate cost based on cart weight
-            foreach ( $package['contents'] as $item ) {
-                $weight_cost += $item['quantity'] * 1; // $1 per item weight unit
+            // Hardcoded distance logic
+            $distance_km = 12; // Hardcoded distance for testing (10 KM)
+
+            // Calculate additional cost if distance exceeds 5 km
+            $additional_cost = 0;
+            if ( $distance_km > 5 ) {
+                $additional_km = $distance_km - 5;
+                $additional_cost = $additional_km * $extra_cost_per_km;
             }
 
             // Total cost
-            $total_cost = $base_cost + $distance_cost + $weight_cost;
+            $total_cost = $base_cost + $additional_cost;
 
             // Add the shipping rate
             $this->add_rate([
                 'id'    => $this->id,
-                'label' => $this->title,
+                'label' => $this->title . " (10 km hardcoded)",
                 'cost'  => $total_cost,
             ]);
         }
@@ -100,3 +111,4 @@ add_action( 'init', function() {
         error_log( 'Advanced Shipping Rules class NOT loaded.' );
     }
 });
+

@@ -73,7 +73,7 @@ function advanced_shipping_rules_init() {
             $extra_cost_per_km = $this->get_option( 'extra_cost_per_km', 200 ); // Additional cost per km
 
             // Hardcoded distance logic
-            $distance_km = 12; // Hardcoded distance for testing (10 KM)
+            $distance_km = 10; // Hardcoded distance for testing (10 KM)
 
             // Calculate additional cost if distance exceeds 5 km
             $additional_cost = 0;
